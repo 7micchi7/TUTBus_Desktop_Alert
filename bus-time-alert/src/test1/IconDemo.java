@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class IconDemo {
-	
+
 	static JsonNode DetaNode;
 
 	public static void main(String[] args) {
@@ -47,9 +47,8 @@ public class IconDemo {
 				// TODO Auto-generated method stub
 //				icon.displayMessage("サンプルプログラム", "Hello world !!", MessageType.INFO);
 				executeGet();
-				icon.displayMessage("Hello world !!", DetaNode.get("timetables").get(0).get("departure_time").asText(), MessageType.INFO);
-				DateTimeFormatter dtf = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-				System.out.println(LocalDateTime.parse(DetaNode.get("timetables").get(0).get("departure_time").asText(),dtf));
+				icon.displayMessage(DetaNode.get("course").get("arrival").get("name").asText() , getTimeTable(), MessageType.INFO);
+				System.out.println(getTimeTable()); 
 			}
 		});
 
@@ -113,22 +112,26 @@ public class IconDemo {
 			String response = responsBuffer.toString();
 
 			DetaNode = mapper.readTree(response);
-			
+
 			String ArrvalName = DetaNode.get("course").get("arrival").get("name").asText();
-			
+
 			System.out.println(ArrvalName);
 
-			//			System.out.println(response);
+			// System.out.println(response);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-//	private String getTimeTable() {
-//		String 
-//		return ;
-//	}
+
+	private String getTimeTable() {
+		DateTimeFormatter dtf = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+		LocalDateTime busTime1 = LocalDateTime.parse(DetaNode.get("timetables").get(0).get("departure_time").asText(), dtf);
+		LocalDateTime busTime2 = LocalDateTime.parse(DetaNode.get("timetables").get(1).get("departure_time").asText(), dtf);
+		LocalDateTime busTime3 = LocalDateTime.parse(DetaNode.get("timetables").get(2).get("departure_time").asText(), dtf);
+		dtf = DateTimeFormatter.ofPattern("HH時間mm分");
+
+		return busTime1.format(dtf) + "\n" + busTime2.format(dtf) + "\n" + busTime3.format(dtf) + "に来ます";
+	}
 
 }
-
