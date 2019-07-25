@@ -27,6 +27,7 @@ public class IconDemo {
 	public static void main(String[] args) {
 		IconDemo app = new IconDemo();
 		app.run();
+	
 	}
 
 	/**
@@ -45,15 +46,23 @@ public class IconDemo {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-//				icon.displayMessage("サンプルプログラム", "Hello world !!", MessageType.INFO);
 				executeGet();
 				icon.displayMessage(DetaNode.get("course").get("arrival").get("name").asText() , getTimeTable(), MessageType.INFO);
 				System.out.println(getTimeTable()); 
 			}
 		});
-
-		MenuItem item2 = new MenuItem("exit");
+		
+		MenuItem item2 = new MenuItem("setting");
 		item2.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+			}
+		});
+
+		MenuItem item3 = new MenuItem("exit");
+		item3.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -64,6 +73,7 @@ public class IconDemo {
 
 		popup.add(item1);
 		popup.add(item2);
+		popup.add(item3);
 
 		try {
 			SystemTray.getSystemTray().add(icon); // ※2 システムトレイに追加
@@ -73,9 +83,9 @@ public class IconDemo {
 	}
 
 	private static void executeGet() {
-
+		PropertyUtil propUtil = new PropertyUtil();
 		String base_url = "https://bus.t-lab.cs.teu.ac.jp/api/v1/timetables?";
-		String from = "from=2";
+		String from = "from=" + propUtil.getProperty("from");
 		LocalDateTime ldt = LocalDateTime.now();
 
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("'datetime='yyyy-MM-dd'%20'HH:mm");
@@ -83,7 +93,6 @@ public class IconDemo {
 		System.out.println(base_url + from + "&" + date);
 
 		try {
-//			URL url = new URL("https://bus.t-lab.cs.teu.ac.jp/api/v1/timetables?from=2&datetime=2019-07-23%2016:00");
 			URL url = new URL(base_url + from + "&" + date);
 
 			HttpURLConnection connection = null;
