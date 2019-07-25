@@ -1,6 +1,5 @@
 package test1;
 
-import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -16,6 +15,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +30,6 @@ public class IconDemo {
 	public static void main(String[] args) {
 		IconDemo app = new IconDemo();
 		app.run();
-	
 	}
 
 	/**
@@ -40,7 +42,7 @@ public class IconDemo {
 		TrayIcon icon = new TrayIcon(image, "Sample Java App", popup); // ※1 トレイアイコンとして生成
 		icon.setImageAutoSize(true); // リサイズ
 
-		MenuItem item1 = new MenuItem("Hello");
+		MenuItem item1 = new MenuItem("BusTime");
 		item1.addActionListener(new ActionListener() {
 
 			@Override
@@ -74,24 +76,37 @@ public class IconDemo {
 		popup.add(item1);
 		popup.add(item2);
 		popup.add(item3);
+		LocalDateTime nowTime = LocalDateTime.now();
+		
+		Timer timer = new Timer();
+		TimerTask task = new TimerTask() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				executeGet();
+				icon.displayMessage(DetaNode.get("course").get("arrival").get("name").asText() , getTimeTable(), MessageType.INFO);
+			}
+		};
+//		timer.scheduleAtFixedRate(task, toDaySchedule(), nextDaySchedule());
+	
 
 		try {
 			SystemTray.getSystemTray().add(icon); // ※2 システムトレイに追加
-		} catch (AWTException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	private static void executeGet() {
-		PropertyUtil propUtil = new PropertyUtil();
 		String base_url = "https://bus.t-lab.cs.teu.ac.jp/api/v1/timetables?";
-		String from = "from=" + propUtil.getProperty("from");
+		String from = "from=" + getSetting("from");
 		LocalDateTime ldt = LocalDateTime.now();
 
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("'datetime='yyyy-MM-dd'%20'HH:mm");
 		String date = ldt.format(dtf);
 		System.out.println(base_url + from + "&" + date);
-
+//
 		try {
 			URL url = new URL(base_url + from + "&" + date);
 
@@ -141,6 +156,20 @@ public class IconDemo {
 		dtf = DateTimeFormatter.ofPattern("HH時間mm分");
 
 		return busTime1.format(dtf) + "\n" + busTime2.format(dtf) + "\n" + busTime3.format(dtf) + "に来ます";
+	}
+	
+	private static String getSetting(String key) {
+		PropertyUtil prop = new PropertyUtil();
+		return prop.getProperty(key);
+	}
+	
+	private static Date toDaySchedule() {
+		Calendar cal = Calendar.getInstance();
+		Date nowDate = new Date();
+		cal.setTime(nowDate);
+		getSetting(Integer.toString(cal.DAY_OF_MONTH);
+
+		return nowDate;
 	}
 
 }

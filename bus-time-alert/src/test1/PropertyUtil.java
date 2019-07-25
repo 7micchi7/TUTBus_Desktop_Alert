@@ -25,7 +25,7 @@ public class PropertyUtil {
 	 * @param key キー
 	 * @return 値
 	 */
-	public static String getProperty(final String key) {
+	public String getProperty(final String key) {
 		return getProperty(key, "");
 	}
 
@@ -37,7 +37,7 @@ public class PropertyUtil {
 	 * @return キーが存在しない場合、デフォルト値
 	 *          存在する場合、値
 	 */
-	public static String getProperty(final String key, final String defaultValue) {
+	public String getProperty(final String key, final String defaultValue) {
 		return properties.getProperty(key, defaultValue);
 	}
 }
